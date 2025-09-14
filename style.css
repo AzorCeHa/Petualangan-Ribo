@@ -1,0 +1,165 @@
+body {
+  background: linear-gradient(135deg, #232526 0%, #414345 100%);
+  color: #f8f8f2;
+  font-family: 'Segoe UI', 'Courier New', Courier, monospace;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+#game-container {
+  max-width: 650px;
+  margin: 40px auto;
+  background: rgba(36, 37, 38, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 0 24px #222;
+  padding: 32px 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 16px;
+  color: #ffd700;
+  letter-spacing: 1px;
+  text-shadow: 1px 2px 6px #222;
+  animation: slideDown 1s;
+}
+
+#story {
+  margin-bottom: 24px;
+  font-size: 1.15em;
+  min-height: 98px;
+  border-left: 4px solid #ffd700;
+  padding-left: 16px;
+  background: rgba(48, 48, 48, 0.5);
+  transition: background 0.2s;
+}
+
+.fade {
+  animation: fadeIn 0.7s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-40px); opacity:0;}
+  to { transform: translateY(0); opacity:1;}
+}
+
+.flash {
+  animation: flashHighlight 0.4s;
+}
+@keyframes flashHighlight {
+  0% { background: #ffd700; }
+  100% { background: rgba(48,48,48,0.5); }
+}
+
+#choices button {
+  display: block;
+  margin: 10px 0;
+  padding: 12px 22px;
+  background: linear-gradient(90deg, #ffd700 0%, #ffa500 100%);
+  color: #232526;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 2;
+}
+#choices button:hover {
+  background: linear-gradient(90deg, #ffa500 0%, #ffd700 100%);
+  transform: scale(1.07);
+  box-shadow: 0 4px 20px #ffd70070;
+}
+
+#stats, #inventory {
+  margin-top: 16px;
+  font-size: 0.97em;
+  color: #aaffcc;
+  background: rgba(34, 49, 63, 0.7);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  transition: background 0.2s;
+}
+#stats.flash, #inventory.flash {
+  background: #ffd700;
+  color: #232526;
+}
+
+#inventory {
+  color: #ffd700;
+  font-size: 1em;
+  margin-top: 12px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  overflow: auto;
+  background: rgba(0,0,0,0.7);
+}
+.modal-content {
+  background: #232526;
+  margin: 7% auto;
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 400px;
+  color: #ffd700;
+  position: relative;
+  box-shadow: 0 0 20px #222;
+}
+.close {
+  color: #ffd700;
+  position: absolute;
+  right: 18px;
+  top: 10px;
+  font-size: 32px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.close:hover {
+  color: #ffa500;
+}
+.shop-item {
+  background: #444;
+  margin-bottom: 12px;
+  padding: 12px;
+  border-radius: 6px;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.shop-item button {
+  background: #ffd700;
+  color: #232526;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.shop-item button:hover {
+  background: #ffa500;
+}
+#confetti-canvas {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+}
