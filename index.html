@@ -11,6 +11,7 @@
     <h1>Petualangan Ribo</h1>
     <div id="story" class="fade"></div>
     <div id="choices"></div>
+
     <div id="shop" class="modal">
       <div class="modal-content">
         <span class="close" id="closeShop">&times;</span>
@@ -18,22 +19,36 @@
         <div id="shop-items"></div>
       </div>
     </div>
+
     <div id="inventory"></div>
     <div id="stats"></div>
+
+    <!-- 🔹 Kontrol Save/Load -->
+    <div id="save-controls">
+      <button onclick="saveGame()">💾 Save</button>
+      <button onclick="loadGame()">📂 Load</button>
+      <button onclick="document.getElementById('exportBox').value = exportSave() || ''">⬆️ Export</button>
+      <button onclick="importSave(document.getElementById('exportBox').value)">⬇️ Import</button>
+      <button onclick="deleteSave(); alert('Save dihapus!')">🗑️ Hapus Save</button>
+      <textarea id="exportBox" placeholder="Paste kode save di sini untuk import..."></textarea>
+    </div>
+
     <canvas id="confetti-canvas"></canvas>
   </div>
-<footer id="footer-pembuat">
-  <div>
-    <img src="https://bayarwebazor.vercel.app/azor.png" alt="Profil AzorCeHa" />
+
+  <footer id="footer-pembuat">
     <div>
-      Dibuat oleh <b>AzorCeHa</b><br>
-      Via Azor: <a href="mailto:arsyabernafas@gmail.com">arsyabernafas@gmail.com</a>
-     <a href="https://wa.me/628811784465">WhatsApp</a>
-     <a href="https://wa.me/6285810042432">WhatsApp Bot</a>
-     <a href="https://github.com/AzorCeHa">GitHub</a>
+      <img src="https://bayarwebazor.vercel.app/azor.png" alt="Profil AzorCeHa" />
+      <div>
+        Dibuat oleh <b>AzorCeHa</b><br>
+        Via Azor: <a href="mailto:arsyabernafas@gmail.com">arsyabernafas@gmail.com</a>
+        <a href="https://wa.me/628811784465">WhatsApp</a>
+        <a href="https://wa.me/6285810042432">WhatsApp Bot</a>
+        <a href="https://github.com/AzorCeHa">GitHub</a>
+      </div>
     </div>
-  </div>
-</footer>
+  </footer>
+
   <script src="script.js"></script>
 </body>
 </html>
