@@ -23,16 +23,6 @@
     <div id="inventory"></div>
     <div id="stats"></div>
 
-    <!-- 🔹 Kontrol Save/Load -->
-    <div id="save-controls">
-      <button onclick="saveGame()">💾 Save</button>
-      <button onclick="loadGame()">📂 Load</button>
-      <button onclick="document.getElementById('exportBox').value = exportSave() || ''">⬆️ Export</button>
-      <button onclick="importSave(document.getElementById('exportBox').value)">⬇️ Import</button>
-      <button onclick="deleteSave(); alert('Save dihapus!')">🗑️ Hapus Save</button>
-      <textarea id="exportBox" placeholder="Paste kode save di sini untuk import..."></textarea>
-    </div>
-
     <canvas id="confetti-canvas"></canvas>
   </div>
 
