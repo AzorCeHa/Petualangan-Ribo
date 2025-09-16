@@ -118,39 +118,39 @@ h1 {
     width: 80px;
     height: 80px;
   }
-/* 🔹 Kontrol Save/Load */
+/* 🔹 Styling tombol Save/Load biar mirip tombol pilihan */
 #save-controls {
-  margin-top: 22px;
-  padding: 12px;
+  margin-top: 20px;
+  padding: 16px;
   background: rgba(34, 49, 63, 0.7);
   border-radius: 12px;
-  text-align: center;
 }
 
 #save-controls button {
-  display: inline-block;
-  margin: 8px;
-  padding: 16px 28px;
+  display: block;
+  width: 100%;
+  margin: 12px 0;
+  padding: 18px 40px;
   background: linear-gradient(90deg, #ffd700 0%, #ffa500 100%);
   color: #232526;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-weight: bold;
   cursor: pointer;
-  font-size: 1.1em;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
-  transition: all 0.3s ease;
+  font-size: 1.2em;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
 }
 
 #save-controls button:hover {
   background: linear-gradient(90deg, #ffa500 0%, #ffd700 100%);
-  transform: scale(1.08);
-  box-shadow: 0 4px 18px #ffd70070;
+  transform: scale(1.05);
+  box-shadow: 0 4px 18px #ffd70080;
 }
 
+/* 🔹 Textarea export/import */
 #save-controls textarea {
-  width: 95%;
-  height: 80px;
+  width: 100%;
+  height: 90px;
   margin-top: 12px;
   padding: 10px;
   font-size: 1em;
@@ -158,5 +158,6 @@ h1 {
   border: 1px solid #555;
   resize: none;
 }
+
 
 }
