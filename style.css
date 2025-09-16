@@ -118,4 +118,45 @@ h1 {
     width: 80px;
     height: 80px;
   }
+/* 🔹 Kontrol Save/Load */
+#save-controls {
+  margin-top: 22px;
+  padding: 12px;
+  background: rgba(34, 49, 63, 0.7);
+  border-radius: 12px;
+  text-align: center;
+}
+
+#save-controls button {
+  display: inline-block;
+  margin: 8px;
+  padding: 16px 28px;
+  background: linear-gradient(90deg, #ffd700 0%, #ffa500 100%);
+  color: #232526;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.1em;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+#save-controls button:hover {
+  background: linear-gradient(90deg, #ffa500 0%, #ffd700 100%);
+  transform: scale(1.08);
+  box-shadow: 0 4px 18px #ffd70070;
+}
+
+#save-controls textarea {
+  width: 95%;
+  height: 80px;
+  margin-top: 12px;
+  padding: 10px;
+  font-size: 1em;
+  border-radius: 10px;
+  border: 1px solid #555;
+  resize: none;
+}
+
 }
