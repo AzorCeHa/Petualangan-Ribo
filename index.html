@@ -31,7 +31,7 @@
   
   <button onclick="importSave(document.getElementById('exportBox').value)" style="display:block;width:100%;margin:14px 0;padding:20px 40px;background:linear-gradient(90deg,#ffd700 0%,#ffa500 100%);color:#232526;border:none;border-radius:12px;font-weight:bold;cursor:pointer;font-size:1.3em;box-shadow:0 2px 12px rgba(0,0,0,0.25);">⬇️ Import</button>
   
-  <button onclick="deleteSave(); alert('Save dihapus!')" style="display:block;width:100%;margin:14px 0;padding:20px 40px;background:linear-gradient(90deg,#ffd700 0%,#ffa500 100%);color:#232526;border:none;border-radius:12px;font-weight:bold;cursor:pointer;font-size:1.3em;box-shadow:0 2px 12px rgba(0,0,0,0.25);">🗑️ Hapus Save</button>
+  <button onclick="deleteSave(); alert('Save dihapus!'); location.reload();" style="display:block;width:100%;margin:14px 0;padding:20px 40px;background:linear-gradient(90deg,#ffd700 0%,#ffa500 100%);color:#232526;border:none;border-radius:12px;font-weight:bold;cursor:pointer;font-size:1.3em;box-shadow:0 2px 12px rgba(0,0,0,0.25);">🗑️ Hapus Save</button>
   
   <textarea id="exportBox" placeholder="Paste kode save di sini untuk import..." 
     style="width:100%;height:90px;margin-top:12px;padding:10px;font-size:1em;border-radius:10px;border:1px solid #555;resize:none;"></textarea>
