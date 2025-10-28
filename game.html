@@ -2,10 +2,17 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RPG Teks - Petualangan Ribo</title>
-<link rel"icon" href ribologo.png">
+  <link rel="icon" href="ribologo.png" type="image/png">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       background: linear-gradient(135deg, #232526 0%, #414345 100%);
       color: #f8f8f2;
@@ -19,11 +26,11 @@
     #game-container {
       max-width: 100vw;
       margin: 0;
-      padding: 8vw 2vw 10vw 2vw;
+      padding: 5vw 3vw;
       min-height: 100vh;
       box-sizing: border-box;
       border-radius: 0;
-      font-size: 2em;
+      font-size: clamp(1em, 4vw, 2em);
     }
 
     h1 {
@@ -32,83 +39,91 @@
       color: #ffd700;
       letter-spacing: 1px;
       text-shadow: 1px 2px 6px #222;
-      font-size: 2.5em;
+      font-size: clamp(1.5em, 6vw, 2.5em);
     }
 
     #user-info {
       text-align: center;
       margin-bottom: 20px;
-      font-size: 1.2em;
+      font-size: clamp(0.9em, 3vw, 1.2em);
       color: #aaffcc;
+      padding: 0 10px;
     }
 
     #logout-btn {
       background: linear-gradient(90deg, #ff6b6b 0%, #ff8e8e 100%);
       color: white;
       border: none;
-      padding: 10px 20px;
+      padding: 8px 16px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
       margin-left: 10px;
+      font-size: clamp(0.8em, 3vw, 1em);
     }
 
     #story {
-      margin-bottom: 24px;
-      font-size: 1.5em;
-      min-height: 80px;
-      border-left: 6px solid #ffd700;
-      padding-left: 18px;
+      margin-bottom: 20px;
+      font-size: clamp(1em, 4vw, 1.5em);
+      min-height: 60px;
+      border-left: 4px solid #ffd700;
+      padding-left: 15px;
       background: rgba(48, 48, 48, 0.6);
       word-break: break-word;
+      line-height: 1.4;
+    }
+
+    #choices {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
     #choices button {
-      display: block;
-      margin: 18px 0;
-      padding: 22px 44px;
+      padding: clamp(15px, 4vw, 22px) clamp(20px, 6vw, 44px);
       background: linear-gradient(90deg, #ffd700 0%, #ffa500 100%);
       color: #232526;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       font-weight: bold;
       cursor: pointer;
-      font-size: 1.3em;
+      font-size: clamp(1em, 3vw, 1.3em);
       box-shadow: 0 2px 12px rgba(0,0,0,0.2);
-      position: relative;
-      z-index: 2;
+      transition: all 0.3s ease;
+      word-break: break-word;
+      min-height: 60px;
     }
 
     #choices button:hover {
       background: linear-gradient(90deg, #ffa500 0%, #ffd700 100%);
-      transform: scale(1.10);
+      transform: scale(1.05);
       box-shadow: 0 4px 24px #ffd70070;
     }
 
     #stats, #inventory {
-      margin-top: 22px;
-      font-size: 1.2em;
+      margin-top: 18px;
+      font-size: clamp(0.9em, 3vw, 1.2em);
       color: #aaffcc;
       background: rgba(34, 49, 63, 0.7);
-      border-radius: 10px;
-      padding: 12px 22px;
-      margin-bottom: 14px;
+      border-radius: 8px;
+      padding: 10px 15px;
+      margin-bottom: 12px;
       word-break: break-word;
+      line-height: 1.4;
     }
 
     #inventory {
       color: #ffd700;
-      font-size: 1.2em;
-      margin-top: 18px;
+      margin-top: 15px;
     }
     
     #footer-pembuat {
       width: 100vw;
       text-align: center;
-      margin-top: 40px;
+      margin-top: 30px;
       color: #ffd700;
-      font-size: 1.5em;
-      padding: 30px 0 20px 0;
+      font-size: clamp(1em, 3vw, 1.5em);
+      padding: 20px 0;
       background: rgba(36,37,38,0.97);
       box-shadow: 0 -2px 12px #222;
     }
@@ -117,12 +132,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 18px;
+      gap: 15px;
+      padding: 0 10px;
     }
 
     #footer-pembuat img {
-      width: 110px;
-      height: 110px;
+      width: clamp(80px, 20vw, 110px);
+      height: clamp(80px, 20vw, 110px);
       object-fit: cover;
       border-radius: 50%;
       box-shadow: 0 2px 14px #222;
@@ -133,7 +149,8 @@
       color: #ffd700;
       text-decoration: underline;
       font-weight: bold;
-      font-size: 1em;
+      font-size: clamp(0.8em, 3vw, 1em);
+      margin: 0 5px;
     }
 
     .modal {
@@ -145,6 +162,7 @@
       width: 100%;
       height: 100%;
       background-color: rgba(0,0,0,0.7);
+      padding: 10px;
     }
 
     .modal-content {
@@ -152,16 +170,18 @@
       margin: 5% auto;
       padding: 20px;
       border: 2px solid #ffd700;
-      width: 80%;
+      width: 95%;
       max-width: 600px;
       border-radius: 12px;
       color: #f8f8f2;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .close {
       color: #ffd700;
       float: right;
-      font-size: 28px;
+      font-size: clamp(20px, 6vw, 28px);
       font-weight: bold;
       cursor: pointer;
     }
@@ -172,12 +192,16 @@
 
     .shop-item {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 10px;
       margin: 10px 0;
       padding: 10px;
       background: rgba(255,255,255,0.1);
       border-radius: 8px;
+    }
+
+    .shop-item span {
+      font-size: clamp(0.9em, 3vw, 1em);
     }
 
     .shop-item button {
@@ -188,6 +212,7 @@
       padding: 8px 16px;
       font-weight: bold;
       cursor: pointer;
+      font-size: clamp(0.8em, 3vw, 1em);
     }
 
     .inv-item {
@@ -210,44 +235,117 @@
 
     #zone-info {
       margin-top: 10px;
-      font-size: 1.2em;
+      font-size: clamp(0.9em, 3vw, 1.2em);
       color: #aaffcc;
       background: rgba(34, 49, 63, 0.7);
-      border-radius: 10px;
-      padding: 12px 22px;
-      margin-bottom: 14px;
+      border-radius: 8px;
+      padding: 10px 15px;
+      margin-bottom: 12px;
+      line-height: 1.4;
     }
 
     .save-controls {
       margin-top: 20px;
-      padding: 16px;
+      padding: 12px;
       background: rgba(34,49,63,0.7);
-      border-radius: 12px;
+      border-radius: 10px;
     }
 
     .save-controls button {
       display: block;
       width: 100%;
-      margin: 14px 0;
-      padding: 20px 40px;
+      margin: 10px 0;
+      padding: clamp(15px, 4vw, 20px) clamp(20px, 6vw, 40px);
       background: linear-gradient(90deg,#ffd700 0%,#ffa500 100%);
       color:#232526;
       border:none;
-      border-radius:12px;
+      border-radius:10px;
       font-weight:bold;
       cursor:pointer;
-      font-size:1.3em;
+      font-size: clamp(1em, 3vw, 1.3em);
       box-shadow:0 2px 12px rgba(0,0,0,0.25);
     }
 
-    @media (max-width: 700px) {
-      #footer-pembuat {
-        font-size: 1.1em;
-        padding: 22px 0 12px 0;
+    /* Responsif untuk tablet */
+    @media (min-width: 768px) {
+      #game-container {
+        padding: 4vw 5vw;
       }
-      #footer-pembuat img {
-        width: 80px;
-        height: 80px;
+      
+      .shop-item {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    /* Responsif untuk desktop */
+    @media (min-width: 1024px) {
+      #game-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2vw;
+      }
+      
+      #choices button {
+        min-height: auto;
+      }
+    }
+
+    /* Responsif untuk mobile sangat kecil */
+    @media (max-width: 480px) {
+      #game-container {
+        padding: 4vw 2vw;
+      }
+      
+      #story {
+        padding-left: 10px;
+        border-left-width: 3px;
+      }
+      
+      #choices button {
+        padding: 12px 16px;
+      }
+      
+      .save-controls button {
+        padding: 12px 20px;
+      }
+      
+      #footer-pembuat {
+        padding: 15px 0;
+      }
+    }
+
+    @media (max-width: 320px) {
+      #game-container {
+        padding: 3vw 1vw;
+      }
+      
+      #story {
+        font-size: 0.9em;
+        min-height: 50px;
+      }
+      
+      #choices button {
+        padding: 10px 12px;
+        font-size: 0.9em;
+      }
+    }
+
+    /* Landscape mode untuk mobile */
+    @media (max-height: 500px) and (orientation: landscape) {
+      #game-container {
+        padding: 2vw;
+      }
+      
+      #story {
+        min-height: 40px;
+        font-size: 0.9em;
+      }
+      
+      #choices button {
+        padding: 8px 12px;
+        min-height: 40px;
       }
     }
   </style>
@@ -294,8 +392,8 @@
 
   <script>
     // Inisialisasi Supabase
-    const supabaseUrl = 'https://your-project.supabase.co'; // Ganti dengan URL Supabase Anda
-    const supabaseKey = 'your-anon-key'; // Ganti dengan anon key Anda
+    const supabaseUrl = 'https://srqpltxfxvgsxpfbehyu.supabase.co'; // Ganti dengan URL Supabase Anda
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNycXBsdHhmeHZnc3hwZmJlaHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE2NDY4NDksImV4cCI6MjA3NzIyMjg0OX0.A-Mj6zS9IxySyouIsSvlOZxa3OMHDi6Ho7lJd9IPM3M'; // Ganti dengan anon key Anda
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     // Cek apakah user sudah login
