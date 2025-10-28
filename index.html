@@ -2,1249 +2,314 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>RPG Teks - Petualangan Ribo</title>
-<link rel"icon" href ribologo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Petualangan Ribo</title>
+  <link rel="icon" href="ribologo.png" type="image/png">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       background: linear-gradient(135deg, #232526 0%, #414345 100%);
       color: #f8f8f2;
-      font-family: 'Segoe UI', 'Courier New', Courier, monospace;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
-      padding: 0;
-      overflow-x: hidden;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       min-height: 100vh;
     }
 
-    #game-container {
-      max-width: 100vw;
-      margin: 0;
-      padding: 8vw 2vw 10vw 2vw;
-      min-height: 100vh;
-      box-sizing: border-box;
-      border-radius: 0;
-      font-size: 2em;
+    .login-container {
+      background: rgba(34, 49, 63, 0.95);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      border: 2px solid #ffd700;
     }
 
     h1 {
-      text-align: center;
-      margin-bottom: 16px;
       color: #ffd700;
-      letter-spacing: 1px;
-      text-shadow: 1px 2px 6px #222;
-      font-size: 2.5em;
+      margin-bottom: 25px;
+      font-size: clamp(1.8em, 5vw, 2.2em);
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
 
-    #story {
-      margin-bottom: 24px;
-      font-size: 1.5em;
-      min-height: 80px;
-      border-left: 6px solid #ffd700;
-      padding-left: 18px;
-      background: rgba(48, 48, 48, 0.6);
-      word-break: break-word;
+    .input-group {
+      margin-bottom: 20px;
+      text-align: left;
     }
 
-    #choices button {
+    label {
       display: block;
-      margin: 18px 0;
-      padding: 22px 44px;
-      background: linear-gradient(90deg, #ffd700 0%, #ffa500 100%);
-      color: #232526;
-      border: none;
-      border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 1.3em;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
-      position: relative;
-      z-index: 2;
-    }
-
-    #choices button:hover {
-      background: linear-gradient(90deg, #ffa500 0%, #ffd700 100%);
-      transform: scale(1.10);
-      box-shadow: 0 4px 24px #ffd70070;
-    }
-
-    #stats, #inventory {
-      margin-top: 22px;
-      font-size: 1.2em;
+      margin-bottom: 8px;
       color: #aaffcc;
-      background: rgba(34, 49, 63, 0.7);
-      border-radius: 10px;
-      padding: 12px 22px;
-      margin-bottom: 14px;
-      word-break: break-word;
-    }
-
-    #inventory {
-      color: #ffd700;
-      font-size: 1.2em;
-      margin-top: 18px;
-    }
-    
-    #footer-pembuat {
-      width: 100vw;
-      text-align: center;
-      margin-top: 40px;
-      color: #ffd700;
-      font-size: 1.5em;
-      padding: 30px 0 20px 0;
-      background: rgba(36,37,38,0.97);
-      box-shadow: 0 -2px 12px #222;
-    }
-
-    #footer-pembuat div {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 18px;
-    }
-
-    #footer-pembuat img {
-      width: 110px;
-      height: 110px;
-      object-fit: cover;
-      border-radius: 50%;
-      box-shadow: 0 2px 14px #222;
-      border: 3px solid #ffd700;
-    }
-
-    #footer-pembuat a {
-      color: #ffd700;
-      text-decoration: underline;
       font-weight: bold;
-      font-size: 1em;
+      font-size: clamp(0.9em, 3vw, 1em);
     }
 
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 100;
-      left: 0;
-      top: 0;
+    input {
       width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.7);
-    }
-
-    .modal-content {
-      background: linear-gradient(135deg, #232526 0%, #414345 100%);
-      margin: 5% auto;
-      padding: 20px;
-      border: 2px solid #ffd700;
-      width: 80%;
-      max-width: 600px;
-      border-radius: 12px;
-      color: #f8f8f2;
-    }
-
-    .close {
-      color: #ffd700;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .close:hover {
-      color: #ffa500;
-    }
-
-    .shop-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 10px 0;
-      padding: 10px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 8px;
-    }
-
-    .shop-item button {
-      background: linear-gradient(90deg, #ffd700 0%, #ffa500 100%);
-      color: #232526;
-      border: none;
-      border-radius: 6px;
-      padding: 8px 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .inv-item {
-      cursor: pointer;
-      text-decoration: underline;
-    }
-
-    .inv-item:hover {
-      color: #ffa500;
-    }
-
-    .flash {
-      animation: flash 0.4s;
-    }
-
-    @keyframes flash {
-      0% { background-color: rgba(255, 215, 0, 0.3); }
-      100% { background-color: transparent; }
-    }
-
-    #login-modal {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    #login-modal input {
       padding: 12px;
+      border: 2px solid #555;
       border-radius: 8px;
-      border: 1px solid #555;
       background: rgba(255,255,255,0.1);
       color: white;
-      font-size: 1em;
+      font-size: clamp(0.9em, 3vw, 1em);
+      box-sizing: border-box;
     }
 
-    #login-modal button {
-      padding: 12px;
+    input:focus {
+      border-color: #ffd700;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
       background: linear-gradient(90deg, #ffd700 0%, #ffa500 100%);
       color: #232526;
       border: none;
       border-radius: 8px;
       font-weight: bold;
       cursor: pointer;
-      font-size: 1.1em;
+      font-size: clamp(1em, 3vw, 1.1em);
+      margin: 10px 0;
+      transition: transform 0.2s;
     }
 
-    #zone-info {
-      margin-top: 10px;
-      font-size: 1.2em;
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    .secondary-btn {
+      background: linear-gradient(90deg, #666 0%, #888 100%);
+      color: white;
+    }
+
+    .message {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: clamp(0.8em, 3vw, 0.9em);
+    }
+
+    .success {
+      background: rgba(0,255,0,0.2);
       color: #aaffcc;
-      background: rgba(34, 49, 63, 0.7);
-      border-radius: 10px;
-      padding: 12px 22px;
-      margin-bottom: 14px;
     }
 
-    @media (max-width: 700px) {
-      #footer-pembuat {
-        font-size: 1.1em;
-        padding: 22px 0 12px 0;
+    .error {
+      background: rgba(255,0,0,0.2);
+      color: #ff6b6b;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8em;
+      color: #232526;
+      font-weight: bold;
+    }
+
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .demo-info {
+      margin-top: 20px;
+      font-size: clamp(0.8em, 3vw, 0.9em);
+      color: #ccc;
+      line-height: 1.4;
+    }
+
+    /* Responsif untuk mobile sangat kecil */
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
       }
-      #footer-pembuat img {
-        width: 80px;
-        height: 80px;
+      
+      .login-container {
+        padding: 20px;
+      }
+      
+      .logo {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5em;
+      }
+      
+      button {
+        padding: 12px;
+      }
+    }
+
+    @media (max-width: 320px) {
+      .login-container {
+        padding: 15px;
+      }
+      
+      h1 {
+        font-size: 1.5em;
       }
     }
   </style>
 </head>
 <body>
-  <div id="game-container">
+  <div class="login-container">
+    <div class="logo">R</div>
     <h1>Petualangan Ribo</h1>
-    <div id="zone-info"></div>
-    <div id="story" class="fade"></div>
-    <div id="choices"></div>
-
-    <div id="shop" class="modal">
-      <div class="modal-content">
-        <span class="close" id="closeShop">&times;</span>
-        <h2>Toko Item</h2>
-        <div id="shop-items"></div>
-      </div>
-    </div>
-
-    <div id="inventory"></div>
-    <div id="stats"></div>
     
-    <div id="save-controls" style="margin-top:20px;padding:16px;background:rgba(34,49,63,0.7);border-radius:12px;">
-      <button onclick="saveGame()" style="display:block;width:100%;margin:14px 0;padding:20px 40px;background:linear-gradient(90deg,#ffd700 0%,#ffa500 100%);color:#232526;border:none;border-radius:12px;font-weight:bold;cursor:pointer;font-size:1.3em;box-shadow:0 2px 12px rgba(0,0,0,0.25);">💾 Save</button>
-      
-      <button onclick="loadGame()" style="display:block;width:100%;margin:14px 0;padding:20px 40px;background:linear-gradient(90deg,#ffd700 0%,#ffa500 100%);color:#232526;border:none;border-radius:12px;font-weight:bold;cursor:pointer;font-size:1.3em;box-shadow:0 2px 12px rgba(0,0,0,0.25);">📂 Load</button>
-      
-      <button onclick="document.getElementById('exportBox').value = exportSave() || ''" style="display:block;width:100%;margin:14px 0;padding:20px 40px;background:linear-gradient(90deg,#ffd700 0%,#ffa500 100%);color:#232526;border:none;border-radius:12px;font-weight:bold;cursor:pointer;font-size:1.3em;box-shadow:0 2px 12px rgba(0,0,0,0.25);">⬆️ Export</button>
-      
-      <button onclick="importSave(document.getElementById('exportBox').value)" style="display:block;width:100%;margin:14px 0;padding:20px 40px;background:linear-gradient(90deg,#ffd700 0%,#ffa500 100%);color:#232526;border:none;border-radius:12px;font-weight:bold;cursor:pointer;font-size:1.3em;box-shadow:0 2px 12px rgba(0,0,0,0.25);">⬇️ Import</button>
-      
-      <button onclick="deleteSave(); alert('Save dihapus!'); location.reload();" style="display:block;width:100%;margin:14px 0;padding:20px 40px;background:linear-gradient(90deg,#ffd700 0%,#ffa500 100%);color:#232526;border:none;border-radius:12px;font-weight:bold;cursor:pointer;font-size:1.3em;box-shadow:0 2px 12px rgba(0,0,0,0.25);">🗑️ Hapus Save</button>
-      
-      <textarea id="exportBox" placeholder="Paste kode save di sini untuk import..." 
-        style="width:100%;height:90px;margin-top:12px;padding:10px;font-size:1em;border-radius:10px;border:1px solid #555;resize:none;"></textarea>
+    <div class="input-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" placeholder="Masukkan email">
     </div>
+    
+    <div class="input-group">
+      <label for="password">Password:</label>
+      <input type="password" id="password" placeholder="Masukkan password">
+    </div>
+    
+    <button onclick="login()">🎮 Masuk ke Game</button>
+    <button class="secondary-btn" onclick="register()">📝 Buat Akun Baru</button>
+    
+    <div id="message" class="message"></div>
 
-    <canvas id="confetti-canvas"></canvas>
-  </div>
-
-  <!-- Login Modal -->
-  <div id="login-modal" class="modal" style="display: flex;">
-    <div class="modal-content">
-      <h2>Login RPG Petualangan Ribo</h2>
-      <input type="text" id="username" placeholder="Username">
-      <input type="password" id="password" placeholder="Password">
-      <button onclick="login()">Login</button>
-      <button onclick="register()">Register</button>
-      <p id="login-message"></p>
+    <div class="demo-info">
+      <p>Gunakan email dan password untuk login/register</p>
     </div>
   </div>
-
-  <footer id="footer-pembuat">
-    <div>
-      <img src="https://bayarwebazor.vercel.app/azor.png" alt="Profil AzorCeHa" />
-      <div>
-        Dibuat oleh <b>AzorCeHa</b><br>
-        Via Azor: <a href="mailto:arsyabernafas@gmail.com">arsyabernafas@gmail.com</a>
-        <a href="https://wa.me/628811784465">WhatsApp</a>
-        <a href="https://wa.me/6285810042432">WhatsApp Bot</a>
-        <a href="https://github.com/AzorCeHa">GitHub</a>
-      </div>
-    </div>
-  </footer>
 
   <script>
-    /* game.js
-       RPG teks berbasis web dengan save/load (Supabase), export/import, autosave.
-       Key savedata: "login"
-    */
+    // Inisialisasi Supabase
+    const supabaseUrl = 'https://srqpltxfxvgsxpfbehyu.supabase.co'; // Ganti dengan URL Supabase Anda
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNycXBsdHhmeHZnc3hwZmJlaHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE2NDY4NDksImV4cCI6MjA3NzIyMjg0OX0.A-Mj6zS9IxySyouIsSvlOZxa3OMHDi6Ho7lJd9IPM3M'; // Ganti dengan anon key Anda
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    /* ----- Konfigurasi Supabase ----- */
-    const SUPABASE_URL = 'https://srqpltxfxvgsxpfbehyu.supabase.co'; // Ganti dengan URL Supabase Anda
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNycXBsdHhmeHZnc3hwZmJlaHl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE2NDY4NDksImV4cCI6MjA3NzIyMjg0OX0.A-Mj6zS9IxySyouIsSvlOZxa3OMHDi6Ho7lJd9IPM3M'; // Ganti dengan anon key Anda
-
-    // Inisialisasi Supabase client
-    const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-
-    /* ----- Elemen DOM (harus ada di HTML) ----- */
-    const storyElement = document.getElementById("story");
-    const choicesElement = document.getElementById("choices");
-    const statsElement = document.getElementById("stats");
-    const inventoryElement = document.getElementById("inventory");
-    const shopModal = document.getElementById("shop");
-    const shopItemsElement = document.getElementById("shop-items");
-    const closeShopBtn = document.getElementById("closeShop");
-    const confettiCanvas = document.getElementById("confetti-canvas");
-    const zoneInfoElement = document.getElementById("zone-info");
-    const loginModal = document.getElementById("login-modal");
-    const loginMessage = document.getElementById("login-message");
-
-    /* ----- Config ----- */
-    const SAVE_KEY = "login";
-    const AUTOSAVE_INTERVAL_MS = 5000; // autosave tiap 5 detik jika ada perubahan
-
-    /* ----- Player default ----- */
-    let player = {
-      hp: 12,
-      maxHp: 12,
-      gold: 15,
-      inventory: [],
-      level: 1,
-      exp: 0,
-      expToNextLevel: 10,
-      attack: 5,
-      defense: 3,
-      currentZone: "desa"
-    };
-
-    let currentScene = "start";
-    let dirty = false; // menandakan ada perubahan yang perlu disimpan
-    let isLoggedIn = false;
-    let userId = null;
-
-    /* ----- Zona dan mobs ----- */
-    const zones = {
-      desa: {
-        name: "Desa Ribo",
-        description: "Desa kecil yang damai dengan penduduk yang ramah.",
-        mobs: [],
-        levelRange: [1, 3]
-      },
-      hutan: {
-        name: "Hutan Gelap",
-        description: "Hutan lebat yang penuh dengan monster dan bahaya.",
-        mobs: ["Goblin", "Serigala Liar", "Slime Hijau"],
-        levelRange: [1, 5]
-      },
-      gua: {
-        name: "Gua Misterius",
-        description: "Gua dalam yang gelap dengan harta karun dan monster kuat.",
-        mobs: ["Goblin Besar", "Skeleton", "Bats"],
-        levelRange: [3, 7]
-      },
-      gunung: {
-        name: "Gunung Berapi",
-        description: "Gunung berapi aktif dengan lava dan monster api.",
-        mobs: ["Golem Api", "Naga Kecil", "Phoenix"],
-        levelRange: [5, 10]
-      },
-      istana: {
-        name: "Istana Terkutuk",
-        description: "Istana megah yang dikutuk dan ditinggali oleh raja iblis.",
-        mobs: ["Kesatria Gelap", "Penyihir Jahat", "Raja Iblis"],
-        levelRange: [8, 15]
-      }
-    };
-
-    /* ----- Items yang dijual ----- */
-    const itemsForSale = [
-      { 
-        name: "Potion", 
-        desc: "Memulihkan 5 HP", 
-        price: 8, 
-        effect: () => { 
-          player.hp = Math.min(player.hp + 5, player.maxHp); 
-          flash(statsElement); 
-        } 
-      },
-      { 
-        name: "Pedang Kayu", 
-        desc: "Meningkatkan kekuatan serangan +2", 
-        price: 12,
-        type: "weapon",
-        stats: { attack: 2 }
-      },
-      { 
-        name: "Perisai Daun", 
-        desc: "Mengurangi kerusakan musuh +2 defense", 
-        price: 10,
-        type: "shield",
-        stats: { defense: 2 }
-      },
-      { 
-        name: "Armor Kulit", 
-        desc: "Meningkatkan pertahanan +3 defense", 
-        price: 15,
-        type: "armor",
-        stats: { defense: 3 }
-      },
-      { 
-        name: "Pedang Besi", 
-        desc: "Meningkatkan kekuatan serangan +5", 
-        price: 25,
-        type: "weapon",
-        stats: { attack: 5 }
-      },
-      { 
-        name: "Perisai Besi", 
-        desc: "Mengurangi kerusakan musuh +5 defense", 
-        price: 20,
-        type: "shield",
-        stats: { defense: 5 }
-      },
-      { 
-        name: "Armor Besi", 
-        desc: "Meningkatkan pertahanan +7 defense", 
-        price: 35,
-        type: "armor",
-        stats: { defense: 7 }
-      },
-      { 
-        name: "Elixir", 
-        desc: "Memulihkan semua HP", 
-        price: 30,
-        effect: () => { 
-          player.hp = player.maxHp; 
-          flash(statsElement); 
-        } 
-      },
-      { 
-        name: "Potion EXP", 
-        desc: "Meningkatkan EXP +10", 
-        price: 20,
-        effect: () => { 
-          player.exp += 10;
-          checkLevelUp();
-          flash(statsElement); 
-        } 
-      }
-    ];
-
-    /* ----- Utilities UI ----- */
-    function flash(element) {
-      if (!element) return;
-      element.classList.add("flash");
-      setTimeout(() => element.classList.remove("flash"), 400);
+    function showMessage(text, type) {
+      const messageEl = document.getElementById('message');
+      messageEl.textContent = text;
+      messageEl.className = `message ${type}`;
     }
 
-    function updateStats(flashUI = false) {
-      if (!statsElement) return;
-      statsElement.innerHTML = `
-        💖 HP: <b>${player.hp}</b> / ${player.maxHp} 
-        &nbsp;&nbsp; 🪙 Gold: <b>${player.gold}</b>
-        &nbsp;&nbsp; ⚔️ Attack: <b>${player.attack}</b>
-        &nbsp;&nbsp; 🛡️ Defense: <b>${player.defense}</b>
-        &nbsp;&nbsp; 📈 Level: <b>${player.level}</b>
-        &nbsp;&nbsp; ⭐ EXP: <b>${player.exp}</b> / ${player.expToNextLevel}
-      `;
-      if (flashUI) flash(statsElement);
-    }
-
-    function updateZoneInfo() {
-      if (!zoneInfoElement) return;
-      const zone = zones[player.currentZone];
-      zoneInfoElement.innerHTML = `📍 Zona: <b>${zone.name}</b> - ${zone.description}`;
-    }
-
-    function updateInventory(flashUI = false) {
-      if (!inventoryElement) return;
-      if (player.inventory.length === 0) {
-        inventoryElement.innerHTML = `🎒 Inventory: (Kosong)`;
+    function setLoading(loading) {
+      const buttons = document.querySelectorAll('button');
+      const inputs = document.querySelectorAll('input');
+      
+      if (loading) {
+        document.querySelector('.login-container').classList.add('loading');
       } else {
-        inventoryElement.innerHTML =
-          "🎒 Inventory: " +
-          player.inventory.map((item, idx) => item.effect ?
-            `<span class="inv-item" data-idx="${idx}" title="Klik untuk pakai">${escapeHtml(item.name)}</span>` :
-            escapeHtml(item.name)
-          ).join(", ");
-      }
-      if (flashUI) flash(inventoryElement);
-    }
-
-    /* safe escape untuk nama item/teks */
-    function escapeHtml(s) {
-      return String(s).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]; });
-    }
-
-    /* ----- Shop UI ----- */
-    function showShop() {
-      if (!shopModal || !shopItemsElement) return;
-      shopModal.style.display = "block";
-      shopItemsElement.innerHTML = "";
-      itemsForSale.forEach((item, idx) => {
-        const div = document.createElement("div");
-        div.className = "shop-item";
-        div.innerHTML = `<span><b>${escapeHtml(item.name)}</b> - ${escapeHtml(item.desc)} <br>Harga: ${item.price} gold</span>
-          <button data-idx="${idx}">Beli</button>`;
-        shopItemsElement.appendChild(div);
-      });
-    }
-
-    function buyItem(idx) {
-      const item = itemsForSale[idx];
-      if (!item) return;
-      if (player.gold >= item.price) {
-        player.gold -= item.price;
-        // copy item object so effect functions remain available
-        player.inventory.push(Object.assign({}, item));
-        markDirty();
-        updateStats(true);
-        updateInventory(true);
-        showConfetti();
-        alert(`Kamu membeli ${item.name}!`);
-      } else {
-        alert("Gold kamu kurang!");
+        document.querySelector('.login-container').classList.remove('loading');
       }
     }
 
-    if (closeShopBtn) {
-      closeShopBtn.onclick = () => { if (shopModal) shopModal.style.display = "none"; };
-    }
-
-    window.onclick = function(event) {
-      if (event.target === shopModal) {
-        shopModal.style.display = "none";
-      }
-    };
-
-    /* ----- Sistem Level ----- */
-    function checkLevelUp() {
-      if (player.exp >= player.expToNextLevel) {
-        player.level++;
-        player.exp -= player.expToNextLevel;
-        player.expToNextLevel = Math.floor(player.expToNextLevel * 1.5);
-        player.maxHp += 5;
-        player.hp = player.maxHp;
-        player.attack += 2;
-        player.defense += 1;
-        
-        alert(`Selamat! Kamu naik ke level ${player.level}!\nHP maksimal +5, Attack +2, Defense +1`);
-        updateStats(true);
-        showConfetti();
-        markDirty();
-      }
-    }
-
-    /* ----- Scenes ----- */
-    const scenes = {
-      start: {
-        text: "Ribo memulai petualangannya di sebuah desa kecil. Terdengar rumor tentang harta karun di berbagai zona berbahaya.<br><br>Apa yang akan dilakukan Ribo?",
-        choices: [
-          { text: "Pergi ke hutan", next: "forest" },
-          { text: "Kunjungi toko di desa", action: showShop, next: "start" },
-          { text: "Periksa inventory", action: () => updateInventory(true), next: "start" },
-          { text: "Pindah zona", next: "changeZone" },
-        ]
-      },
-      changeZone: {
-        text: "Pilih zona yang ingin kamu kunjungi:",
-        choices: Object.keys(zones).map(zoneId => ({
-          text: zones[zoneId].name,
-          action: () => {
-            player.currentZone = zoneId;
-            updateZoneInfo();
-            markDirty();
-          },
-          next: "zoneDescription"
-        }))
-      },
-      zoneDescription: {
-        text: function() {
-          const zone = zones[player.currentZone];
-          return `Kamu tiba di ${zone.name}. ${zone.description}`;
-        },
-        choices: [
-          { text: "Jelajahi zona", next: "exploreZone" },
-          { text: "Kembali ke desa", next: "start" }
-        ]
-      },
-      exploreZone: {
-        text: function() {
-          const zone = zones[player.currentZone];
-          const mobs = zone.mobs;
-          if (mobs.length === 0) {
-            return "Kamu menjelajahi zona ini, tapi tidak menemukan apa-apa yang menarik.";
-          }
-          
-          const randomMob = mobs[Math.floor(Math.random() * mobs.length)];
-          const mobLevel = zone.levelRange[0] + Math.floor(Math.random() * (zone.levelRange[1] - zone.levelRange[0] + 1));
-          const mobHp = 5 + mobLevel * 3;
-          const mobAttack = 2 + mobLevel;
-          const mobDefense = 1 + mobLevel;
-          
-          // Simpan data mob untuk pertarungan
-          currentMob = {
-            name: randomMob,
-            level: mobLevel,
-            hp: mobHp,
-            maxHp: mobHp,
-            attack: mobAttack,
-            defense: mobDefense,
-            expReward: 2 + mobLevel * 2,
-            goldReward: 3 + mobLevel * 3
-          };
-          
-          return `Kamu bertemu dengan ${randomMob} (Level ${mobLevel})!<br>HP: ${mobHp}, Attack: ${mobAttack}, Defense: ${mobDefense}`;
-        },
-        choices: [
-          { text: "Lawan monster", next: "fightMonster" },
-          { text: "Lari", next: "zoneDescription" },
-        ]
-      },
-      fightMonster: {
-        text: function() {
-          if (!currentMob) return "Tidak ada monster untuk dilawan.";
-          
-          // Hitung damage yang diberikan ke monster
-          const playerDamage = Math.max(1, player.attack - currentMob.defense);
-          currentMob.hp -= playerDamage;
-          
-          let resultText = `Kamu menyerang ${currentMob.name} dan menyebabkan ${playerDamage} damage!<br>`;
-          
-          if (currentMob.hp <= 0) {
-            // Player menang
-            resultText += `${currentMob.name} dikalahkan!<br>`;
-            resultText += `Kamu mendapatkan ${currentMob.expReward} EXP dan ${currentMob.goldReward} gold!`;
-            
-            player.exp += currentMob.expReward;
-            player.gold += currentMob.goldReward;
-            checkLevelUp();
-            updateStats(true);
-            showConfetti();
-            
-            // Hapus mob setelah dikalahkan
-            currentMob = null;
-            
-            return {
-              text: resultText,
-              choices: [
-                { text: "Lanjutkan menjelajah", next: "exploreZone" },
-                { text: "Kembali ke zona", next: "zoneDescription" }
-              ]
-            };
-          } else {
-            // Monster masih hidup, serang balik
-            const mobDamage = Math.max(1, currentMob.attack - player.defense);
-            player.hp -= mobDamage;
-            
-            resultText += `${currentMob.name} menyerang balik dan menyebabkan ${mobDamage} damage!<br>`;
-            resultText += `Sisa HP ${currentMob.name}: ${currentMob.hp}`;
-            
-            updateStats(true);
-            
-            if (player.hp <= 0) {
-              // Player kalah
-              return {
-                text: resultText + "<br><br>Kamu kalah dalam pertarungan!",
-                choices: [
-                  { text: "Mulai ulang dari desa", next: "restart" }
-                ]
-              };
-            } else {
-              return {
-                text: resultText,
-                choices: [
-                  { text: "Serang lagi", next: "fightMonster" },
-                  { text: "Gunakan item", next: "useItemInBattle" },
-                  { text: "Coba lari", next: "tryEscape" }
-                ]
-              };
-            }
-          }
-        }
-      },
-      useItemInBattle: {
-        text: "Pilih item untuk digunakan:",
-        choices: function() {
-          const itemChoices = player.inventory
-            .filter(item => item.effect)
-            .map((item, idx) => ({
-              text: item.name,
-              action: () => {
-                item.effect();
-                player.inventory.splice(idx, 1);
-                updateStats(true);
-                updateInventory(true);
-                alert(`${item.name} digunakan!`);
-                markDirty();
-              },
-              next: "fightMonster"
-            }));
-          
-          itemChoices.push({ text: "Kembali", next: "fightMonster" });
-          return itemChoices;
-        }
-      },
-      tryEscape: {
-        text: function() {
-          const escapeChance = 0.7; // 70% chance untuk berhasil lari
-          if (Math.random() < escapeChance) {
-            return "Kamu berhasil melarikan diri dari pertarungan!";
-          } else {
-            const mobDamage = Math.max(1, currentMob.attack - player.defense);
-            player.hp -= mobDamage;
-            updateStats(true);
-            
-            if (player.hp <= 0) {
-              return "Kamu gagal melarikan diri dan dikalahkan oleh monster!";
-            } else {
-              return `Kamu gagal melarikan diri! ${currentMob.name} menyerang dan menyebabkan ${mobDamage} damage.`;
-            }
-          }
-        },
-        choices: function() {
-          if (player.hp <= 0) {
-            return [{ text: "Mulai ulang dari desa", next: "restart" }];
-          } else {
-            return [
-              { text: "Lanjutkan bertarung", next: "fightMonster" },
-              { text: "Coba lari lagi", next: "tryEscape" }
-            ];
-          }
-        }
-      },
-      forest: {
-        text: "Ribo masuk ke hutan lebat. Tiba-tiba muncul monster!<br>Apa yang akan dilakukan?",
-        choices: [
-          { text: "Lawan monster", next: "fightMonster" },
-          { text: "Lari ke desa", next: "start" },
-        ]
-      },
-      deepForest: {
-        text: "Ribo menemukan sebuah peti misterius.",
-        choices: [
-          { text: "Buka peti", next: "openChest" },
-          { text: "Kembali ke hutan", next: "forest" }
-        ]
-      },
-      openChest: {
-        text: "Isi peti: 20 gold dan sebuah Potion!",
-        effect: () => {
-          player.gold += 20;
-          player.inventory.push({ name: "Potion", desc: "Memulihkan 5 HP", price: 0, effect: () => { player.hp = Math.min(player.hp + 5, player.maxHp); flash(statsElement); } });
-          flash(statsElement);
-          showConfetti();
-          markDirty();
-        },
-        choices: [
-          { text: "Pergi ke desa", next: "start" },
-          { text: "Minum Potion", next: "drinkPotion" }
-        ]
-      },
-      drinkPotion: {
-        text: "Kamu meminum Potion. HP bertambah 5.",
-        effect: () => {
-          let idx = player.inventory.findIndex(i=>i.name==="Potion");
-          if (idx > -1) { player.inventory.splice(idx,1); player.hp = Math.min(player.hp+5, player.maxHp); flash(statsElement); markDirty(); }
-        },
-        choices: [
-          { text: "Kembali ke desa", next: "start" }
-        ]
-      },
-      shop: {
-        text: "Kamu berada di toko. Barang apa yang ingin kamu beli?",
-        choices: [
-          { text: "Beli item", action: showShop, next: "start" },
-          { text: "Kembali ke desa", next: "start" },
-        ]
-      },
-      restart: {
-        text: "Game diulang.",
-        effect: () => {
-          player.hp = player.maxHp = 12;
-          player.gold = 15;
-          player.inventory = [];
-          player.level = 1;
-          player.exp = 0;
-          player.expToNextLevel = 10;
-          player.attack = 5;
-          player.defense = 3;
-          player.currentZone = "desa";
-          showConfetti();
-          markDirty();
-        },
-        choices: [
-          { text: "Mulai ulang", next: "start" }
-        ]
-      }
-    };
-
-    let currentMob = null;
-
-    /* ----- Menampilkan scene ----- */
-    function showScene(sceneName) {
-      currentScene = sceneName;
-      const scene = scenes[sceneName];
-      if (!scene) return;
-      
-      // Jalankan effect jika ada
-      if (scene.effect) scene.effect();
-      
-      // Tampilkan teks
-      if (storyElement) {
-        storyElement.classList.remove("fade");
-        void storyElement.offsetWidth; // force reflow
-        storyElement.classList.add("fade");
-        
-        if (typeof scene.text === 'function') {
-          const result = scene.text();
-          if (typeof result === 'object') {
-            storyElement.innerHTML = result.text;
-          } else {
-            storyElement.innerHTML = result;
-          }
-        } else {
-          storyElement.innerHTML = scene.text;
-        }
-      }
-      
-      // Tampilkan pilihan
-      if (choicesElement) {
-        choicesElement.innerHTML = '';
-        let choices = scene.choices;
-        
-        if (typeof choices === 'function') {
-          choices = choices();
-        }
-        
-        choices.forEach(choice => {
-          const btn = document.createElement('button');
-          btn.innerText = choice.text;
-          btn.onclick = () => {
-            if (choice.action) choice.action();
-            showScene(choice.next);
-          };
-          choicesElement.appendChild(btn);
-        });
-      }
-      
-      updateStats();
-      updateInventory();
-      updateZoneInfo();
-      
-      // cek HP
-      if (player.hp <= 0) {
-        if (storyElement) storyElement.innerHTML = "Ribo pingsan! HP habis.<br><b>Petualangan berakhir.</b>";
-        if (choicesElement) choicesElement.innerHTML = `<button onclick="showScene('restart')">Main Lagi</button>`;
-        flash(statsElement);
-        showConfetti();
-        markDirty();
-        updateStats();
-        updateInventory();
-      }
-      markDirty(); // scene change = perubahan
-    }
-
-    /* ----- Inventory click untuk gunakan item ----- */
-    if (inventoryElement) {
-      inventoryElement.addEventListener('click', function(e) {
-        const target = e.target;
-        if (target && target.classList.contains('inv-item')) {
-          const idx = parseInt(target.dataset.idx);
-          const item = player.inventory[idx];
-          if (item && item.effect) {
-            item.effect();
-            player.inventory.splice(idx, 1);
-            updateStats(true);
-            updateInventory(true);
-            showConfetti();
-            alert(`${item.name} digunakan!`);
-            markDirty();
-          } else if (item && item.type) {
-            // Equip weapon, shield, atau armor
-            if (item.type === "weapon") {
-              player.attack += item.stats.attack;
-              alert(`${item.name} dipasang! Attack +${item.stats.attack}`);
-            } else if (item.type === "shield" || item.type === "armor") {
-              player.defense += item.stats.defense;
-              alert(`${item.name} dipasang! Defense +${item.stats.defense}`);
-            }
-            player.inventory.splice(idx, 1);
-            updateStats(true);
-            updateInventory(true);
-            markDirty();
-          }
-        }
-      });
-    }
-
-    /* ----- Confetti ----- */
-    function showConfetti() {
-      if (!confettiCanvas) return;
-      const duration = 700;
-      const end = Date.now() + duration;
-      const colors = ['#ffd700', '#ffa500', '#aaffcc', '#fff176', '#ff7f50', '#ffeb3b'];
-      let particles = [];
-      let width = confettiCanvas.offsetWidth || 300, height = confettiCanvas.offsetHeight || 150;
-      confettiCanvas.width = width; confettiCanvas.height = height;
-      for (let i = 0; i < 25; i++) {
-        particles.push({
-          x: Math.random() * width,
-          y: Math.random() * height / 2,
-          r: 6 + Math.random() * 7,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          speed: 2 + Math.random() * 2,
-          angle: Math.random() * Math.PI * 2
-        });
-      }
-      function draw() {
-        let ctx = confettiCanvas.getContext("2d");
-        ctx.clearRect(0,0,width,height);
-        particles.forEach(p => {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-          ctx.fillStyle = p.color;
-          ctx.globalAlpha = 0.85;
-          ctx.fill();
-          ctx.globalAlpha = 1;
-        });
-      }
-      function update() {
-        particles.forEach(p => {
-          p.y += p.speed;
-          p.x += Math.sin(p.angle) * 2;
-          p.angle += 0.02;
-          if (p.y > height) p.y = -10;
-        });
-      }
-      let animation = setInterval(() => {
-        update(); draw();
-        if (Date.now() > end) {
-          clearInterval(animation);
-          confettiCanvas.getContext("2d").clearRect(0,0,width,height);
-        }
-      }, 35);
-    }
-
-    /* ----- Login & Register ----- */
     async function login() {
-      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       
-      if (!username || !password) {
-        loginMessage.textContent = "Username dan password harus diisi!";
+      if (!email || !password) {
+        showMessage('Email dan password harus diisi!', 'error');
         return;
       }
       
-      if (!supabase) {
-        // Fallback ke localStorage jika Supabase tidak tersedia
-        const savedUser = localStorage.getItem(`user_${username}`);
-        if (savedUser && JSON.parse(savedUser).password === password) {
-          isLoggedIn = true;
-          userId = username;
-          loginModal.style.display = 'none';
-          loadGame();
+      setLoading(true);
+      
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+        
+        if (error) {
+          showMessage('Login gagal: ' + error.message, 'error');
         } else {
-          loginMessage.textContent = "Username atau password salah!";
+          showMessage('Login berhasil! Mengarahkan ke game...', 'success');
+          
+          // Simpan session
+          localStorage.setItem('rpg_user_id', data.user.id);
+          localStorage.setItem('rpg_user_email', data.user.email);
+          
+          // Redirect ke game setelah 1 detik
+          setTimeout(() => {
+            window.location.href = 'game.html';
+          }, 1000);
         }
-        return;
-      }
-      
-      // Login dengan Supabase
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('username', username)
-        .eq('password', password)
-        .single();
-      
-      if (error) {
-        loginMessage.textContent = "Username atau password salah!";
-        console.error('Login error:', error);
-      } else {
-        isLoggedIn = true;
-        userId = data.id;
-        loginModal.style.display = 'none';
-        loadGame();
+      } catch (error) {
+        showMessage('Terjadi kesalahan: ' + error.message, 'error');
+      } finally {
+        setLoading(false);
       }
     }
 
     async function register() {
-      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       
-      if (!username || !password) {
-        loginMessage.textContent = "Username dan password harus diisi!";
+      if (!email || !password) {
+        showMessage('Email dan password harus diisi!', 'error');
         return;
       }
       
-      if (!supabase) {
-        // Fallback ke localStorage jika Supabase tidak tersedia
-        if (localStorage.getItem(`user_${username}`)) {
-          loginMessage.textContent = "Username sudah terdaftar!";
-          return;
-        }
-        
-        localStorage.setItem(`user_${username}`, JSON.stringify({
-          username,
-          password,
-          createdAt: new Date().toISOString()
-        }));
-        
-        loginMessage.textContent = "Registrasi berhasil! Silakan login.";
+      if (password.length < 6) {
+        showMessage('Password harus minimal 6 karakter!', 'error');
         return;
       }
       
-      // Register dengan Supabase
-      const { data, error } = await supabase
-        .from('users')
-        .insert([
-          { username, password, created_at: new Date().toISOString() }
-        ])
-        .select();
-      
-      if (error) {
-        if (error.code === '23505') { // Unique violation
-          loginMessage.textContent = "Username sudah terdaftar!";
-        } else {
-          loginMessage.textContent = "Terjadi kesalahan saat registrasi!";
-          console.error('Registration error:', error);
-        }
-      } else {
-        loginMessage.textContent = "Registrasi berhasil! Silakan login.";
-      }
-    }
-
-    /* ----- Save / Load dengan Supabase ----- */
-    function markDirty() {
-      dirty = true;
-    }
-
-    async function saveGame(slot = "default") {
-      if (!isLoggedIn) {
-        alert("Silakan login terlebih dahulu!");
-        loginModal.style.display = 'flex';
-        return false;
-      }
+      setLoading(true);
       
       try {
-        const payload = {
-          player,
-          currentScene,
-          savedAt: new Date().toISOString()
-        };
-        
-        if (supabase) {
-          // Simpan ke Supabase
-          const { data, error } = await supabase
-            .from('saves')
-            .upsert({
-              user_id: userId,
-              slot: slot,
-              data: payload,
-              updated_at: new Date().toISOString()
-            });
-          
-          if (error) {
-            console.error("Gagal menyimpan ke Supabase:", error);
-            return false;
-          }
-        } else {
-          // Fallback ke localStorage
-          localStorage.setItem(SAVE_KEY + "_" + userId + "_" + slot, JSON.stringify(payload));
-        }
-        
-        dirty = false;
-        flash(statsElement);
-        console.log("Game saved to slot:", slot);
-        return true;
-      } catch (e) {
-        console.error("Gagal menyimpan:", e);
-        return false;
-      }
-    }
-
-    async function loadGame(slot = "default") {
-      if (!isLoggedIn) {
-        loginModal.style.display = 'flex';
-        return false;
-      }
-      
-      try {
-        let payload;
-        
-        if (supabase) {
-          // Load dari Supabase
-          const { data, error } = await supabase
-            .from('saves')
-            .select('data')
-            .eq('user_id', userId)
-            .eq('slot', slot)
-            .single();
-          
-          if (error) {
-            console.warn("Tidak ada save di Supabase:", error);
-            return false;
-          }
-          
-          payload = data.data;
-        } else {
-          // Fallback ke localStorage
-          const raw = localStorage.getItem(SAVE_KEY + "_" + userId + "_" + slot);
-          if (!raw) {
-            console.warn("Tidak ada save di localStorage");
-            return false;
-          }
-          payload = JSON.parse(raw);
-        }
-        
-        if (payload.player) {
-          player = payload.player;
-          // Pastikan properti ada
-          if (!player.maxHp) player.maxHp = 12;
-          if (!player.level) player.level = 1;
-          if (!player.exp) player.exp = 0;
-          if (!player.expToNextLevel) player.expToNextLevel = 10;
-          if (!player.attack) player.attack = 5;
-          if (!player.defense) player.defense = 3;
-          if (!player.currentZone) player.currentZone = "desa";
-        }
-        
-        if (payload.currentScene) currentScene = payload.currentScene;
-        
-        updateStats(true);
-        updateInventory(true);
-        updateZoneInfo();
-        showScene(currentScene || "start");
-        dirty = false;
-        console.log("Loaded save from slot:", slot, "savedAt:", payload.savedAt);
-        return true;
-      } catch (e) {
-        console.error("Gagal memuat save:", e);
-        return false;
-      }
-    }
-
-    async function deleteSave(slot = "default") {
-      if (!isLoggedIn) return;
-      
-      if (supabase) {
-        const { error } = await supabase
-          .from('saves')
-          .delete()
-          .eq('user_id', userId)
-          .eq('slot', slot);
+        const { data, error } = await supabase.auth.signUp({
+          email: email,
+          password: password
+        });
         
         if (error) {
-          console.error("Gagal menghapus save dari Supabase:", error);
-        }
-      } else {
-        localStorage.removeItem(SAVE_KEY + "_" + userId + "_" + slot);
-      }
-      
-      console.log("Deleted save slot", slot);
-    }
-
-    /* ----- Export / Import (JSON string) ----- */
-    function exportSave(slot = "default") {
-      if (!isLoggedIn) return null;
-      
-      let raw;
-      if (supabase) {
-        // Untuk export dari Supabase, kita perlu load dulu
-        // Ini adalah implementasi sederhana, dalam aplikasi nyata mungkin perlu async
-        alert("Export dari Supabase memerlukan implementasi tambahan. Gunakan localStorage untuk fitur ini.");
-        return null;
-      } else {
-        raw = localStorage.getItem(SAVE_KEY + "_" + userId + "_" + slot);
-      }
-      
-      if (!raw) return null;
-      // return base64 agar aman saat copy/paste
-      return btoa(unescape(encodeURIComponent(raw)));
-    }
-
-    function importSave(base64String, slot = "default") {
-      if (!isLoggedIn) {
-        alert("Silakan login terlebih dahulu!");
-        loginModal.style.display = 'flex';
-        return false;
-      }
-      
-      try {
-        const raw = decodeURIComponent(escape(atob(base64String)));
-        // validasi
-        const payload = JSON.parse(raw);
-        
-        if (supabase) {
-          // Import ke Supabase
-          alert("Import ke Supabase memerlukan implementasi tambahan. Gunakan localStorage untuk fitur ini.");
-          return false;
+          showMessage('Registrasi gagal: ' + error.message, 'error');
         } else {
-          localStorage.setItem(SAVE_KEY + "_" + userId + "_" + slot, raw);
+          showMessage('Registrasi berhasil! Silakan cek email untuk verifikasi.', 'success');
+          
+          // Clear form
+          document.getElementById('password').value = '';
         }
-        
-        console.log("Imported save to slot:", slot);
-        return true;
-      } catch (e) {
-        console.error("Import gagal:", e);
-        return false;
+      } catch (error) {
+        showMessage('Terjadi kesalahan: ' + error.message, 'error');
+      } finally {
+        setLoading(false);
       }
     }
 
-    /* ----- Autosave loop ----- */
-    setInterval(() => {
-      if (dirty && isLoggedIn) {
-        saveGame("default");
+    // Cek apakah user sudah login
+    async function checkSession() {
+      const { data, error } = await supabase.auth.getSession();
+      if (data.session) {
+        // User sudah login, redirect ke game
+        localStorage.setItem('rpg_user_id', data.session.user.id);
+        localStorage.setItem('rpg_user_email', data.session.user.email);
+        window.location.href = 'game.html';
       }
-    }, AUTOSAVE_INTERVAL_MS);
+    }
 
-    /* ----- Expose beberapa fungsi untuk tombol/manual ----- */
-    window.saveGame = saveGame;
-    window.loadGame = loadGame;
-    window.deleteSave = deleteSave;
-    window.exportSave = exportSave;
-    window.importSave = importSave;
-    window.buyItem = buyItem;
-    window.showScene = showScene;
-    window.login = login;
-    window.register = register;
-
-    /* ----- Inisialisasi: cek login status ----- */
-    (function init() {
-      // Cek apakah sudah login (untuk demo, kita selalu tampilkan login modal)
-      loginModal.style.display = 'flex';
-      
-      // Jika tidak ada Supabase, beri tahu pengguna
-      if (!supabase) {
-        console.warn("Supabase tidak tersedia. Menggunakan localStorage sebagai fallback.");
-      }
-    })();
+    // Auto-focus pada email field dan cek session
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('email').focus();
+      checkSession();
+    });
   </script>
 </body>
 </html>
