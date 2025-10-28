@@ -825,6 +825,148 @@
           }
         }
       },
+      // PERBAIKAN: Scene hutan yang hilang ditambahkan
+      forest: {
+        text: "Ribo masuk ke hutan lebat. Udara terasa dingin dan pepohonan tinggi menghalangi cahaya matahari.<br><br>Tiba-tiba muncul suara gemeresik dari balik semak!",
+        choices: [
+          { text: "Selidiki suara tersebut", next: "forestInvestigate" },
+          { text: "Cari jalan lain", next: "forestExplore" },
+          { text: "Kembali ke desa", next: "start" }
+        ]
+      },
+      forestInvestigate: {
+        text: "Dengan hati-hati Ribo mendekati sumber suara. Ternyata ada sekelompok Goblin sedang berkemah!",
+        choices: [
+          { text: "Sembunyi dan amati", next: "forestObserve" },
+          { text: "Serang Goblin", next: "forestFight" },
+          { text: "Lari diam-diam", next: "forestEscape" }
+        ]
+      },
+      forestExplore: {
+        text: "Ribo memilih untuk menghindari konflik dan mencari jalan lain. Di tengah hutan, dia menemukan sebuah sungai kecil dengan air yang jernih.",
+        choices: [
+          { text: "Minum air sungai", next: "forestRiverDrink" },
+          { text: "Ikuti aliran sungai", next: "forestRiverFollow" },
+          { text: "Kembali ke jalan utama", next: "forest" }
+        ]
+      },
+      forestObserve: {
+        text: "Dari balik semak, Ribo mengamati para Goblin. Mereka sedang memasak sesuatu dan terlihat lengah. Salah satu Goblin menjatuhkan kunci besi.",
+        choices: [
+          { text: "Ambil kunci saat mereka lengah", next: "forestStealKey" },
+          { text: "Tetap mengamati", next: "forestObserveMore" },
+          { text: "Menyerang sekarang", next: "forestFight" }
+        ]
+      },
+      forestFight: {
+        text: function() {
+          // Buat mob Goblin untuk pertarungan
+          currentMob = {
+            name: "Goblin",
+            level: 2,
+            hp: 8,
+            maxHp: 8,
+            attack: 4,
+            defense: 2,
+            expReward: 5,
+            goldReward: 6
+          };
+          
+          return `Ribo menyerang kelompok Goblin!<br>Pemimpin Goblin (Level ${currentMob.level}) maju menghadang!<br>HP: ${currentMob.hp}, Attack: ${currentMob.attack}, Defense: ${currentMob.defense}`;
+        },
+        choices: [
+          { text: "Lawan Goblin", next: "fightMonster" },
+          { text: "Coba lari", next: "forestEscape" }
+        ]
+      },
+      forestEscape: {
+        text: "Ribo berhasil melarikan diri dari Goblin dan kembali ke pinggir hutan.",
+        choices: [
+          { text: "Masuk kembali ke hutan", next: "forest" },
+          { text: "Kembali ke desa", next: "start" }
+        ]
+      },
+      forestRiverDrink: {
+        text: "Setelah meminum air sungai, Ribo merasa segar kembali. HP bertambah 3!",
+        effect: () => {
+          player.hp = Math.min(player.hp + 3, player.maxHp);
+          updateStats(true);
+        },
+        choices: [
+          { text: "Lanjutkan perjalanan", next: "forestRiverFollow" },
+          { text: "Kembali ke hutan", next: "forest" }
+        ]
+      },
+      forestRiverFollow: {
+        text: "Mengikuti aliran sungai, Ribo menemukan sebuah air terjun kecil yang indah. Di balik air terjun terdapat gua tersembunyi!",
+        choices: [
+          { text: "Masuk ke gua", next: "gua" },
+          { text: "Kembali ke hutan", next: "forest" },
+          { text: "Kembali ke desa", next: "start" }
+        ]
+      },
+      forestStealKey: {
+        text: "Dengan cepat dan diam-diam, Ribo mengambil kunci besi yang terjatuh. Para Goblin tidak menyadarinya!",
+        effect: () => {
+          player.inventory.push({ 
+            name: "Kunci Besi", 
+            desc: "Kunci misterius yang dijatuhkan Goblin", 
+            price: 0
+          });
+          updateInventory(true);
+        },
+        choices: [
+          { text: "Lanjutkan mengamati", next: "forestObserveMore" },
+          { text: "Lari dengan kunci", next: "forestEscape" }
+        ]
+      },
+      forestObserveMore: {
+        text: "Setelah beberapa saat mengamati, Ribo mendengar para Goblin berbicara tentang harta karun di gua dekat air terjun.",
+        choices: [
+          { text: "Cari gua air terjun", next: "forestRiverFollow" },
+          { text: "Tetap di sini", next: "forestObserve" },
+          { text: "Kembali ke desa", next: "start" }
+        ]
+      },
+      // Scene gua (untuk link dari hutan)
+      gua: {
+        text: "Ribo memasuki gua di balik air terjun. Gua ini gelap dan lembab, tetapi ada jejak kaki yang baru saja dibuat.",
+        choices: [
+          { text: "Jelajahi gua lebih dalam", next: "exploreZone" },
+          { text: "Keluar dari gua", next: "forestRiverFollow" }
+        ]
+      },
+      // Scene lain yang sudah ada
+      openChest: {
+        text: "Isi peti: 20 gold dan sebuah Potion!",
+        effect: () => {
+          player.gold += 20;
+          player.inventory.push({ name: "Potion", desc: "Memulihkan 5 HP", price: 0, effect: () => { player.hp = Math.min(player.hp + 5, player.maxHp); flash(statsElement); } });
+          flash(statsElement);
+          showConfetti();
+        },
+        choices: [
+          { text: "Pergi ke desa", next: "start" },
+          { text: "Minum Potion", next: "drinkPotion" }
+        ]
+      },
+      drinkPotion: {
+        text: "Kamu meminum Potion. HP bertambah 5.",
+        effect: () => {
+          let idx = player.inventory.findIndex(i=>i.name==="Potion");
+          if (idx > -1) { player.inventory.splice(idx,1); player.hp = Math.min(player.hp+5, player.maxHp); flash(statsElement); }
+        },
+        choices: [
+          { text: "Kembali ke desa", next: "start" }
+        ]
+      },
+      shop: {
+        text: "Kamu berada di toko. Barang apa yang ingin kamu beli?",
+        choices: [
+          { text: "Beli item", action: showShop, next: "start" },
+          { text: "Kembali ke desa", next: "start" },
+        ]
+      },
       restart: {
         text: "Game diulang.",
         effect: () => {
@@ -847,9 +989,15 @@
 
     /* ----- Menampilkan scene ----- */
     function showScene(sceneName) {
+      console.log("Pindah ke scene:", sceneName); // Debug log
       currentScene = sceneName;
       const scene = scenes[sceneName];
-      if (!scene) return;
+      
+      if (!scene) {
+        console.error("Scene tidak ditemukan:", sceneName);
+        storyElement.innerHTML = "Terjadi kesalahan: Scene tidak ditemukan.";
+        return;
+      }
       
       // Jalankan effect jika ada
       if (scene.effect) scene.effect();
@@ -881,15 +1029,19 @@
           choices = choices();
         }
         
-        choices.forEach(choice => {
-          const btn = document.createElement('button');
-          btn.innerText = choice.text;
-          btn.onclick = () => {
-            if (choice.action) choice.action();
-            showScene(choice.next);
-          };
-          choicesElement.appendChild(btn);
-        });
+        if (choices && choices.length > 0) {
+          choices.forEach(choice => {
+            const btn = document.createElement('button');
+            btn.innerText = choice.text;
+            btn.onclick = () => {
+              if (choice.action) choice.action();
+              showScene(choice.next);
+            };
+            choicesElement.appendChild(btn);
+          });
+        } else {
+          choicesElement.innerHTML = '<button onclick="showScene(\'start\')">Kembali ke Desa</button>';
+        }
       }
       
       updateStats();
@@ -1024,7 +1176,8 @@
           .single();
 
         if (error) {
-          alert('Gagal memuat save: ' + error.message);
+          console.log('Tidak ada save data atau error:', error.message);
+          // Tidak tampilkan alert untuk kasus tidak ada save data
           return;
         }
 
@@ -1039,11 +1192,9 @@
           
           alert('Game berhasil dimuat!');
           showConfetti();
-        } else {
-          alert('Tidak ada data save yang ditemukan!');
         }
       } catch (error) {
-        alert('Terjadi kesalahan: ' + error.message);
+        console.log('Error loading game:', error);
       }
     }
 
